@@ -3,7 +3,7 @@
 #Make nested dictionary for game rooms and console actions
 
 rooms ={
-    'Bridge' : {'Stern' : 'Navigation', 'Console' : 'Offline'},
+    'Bridge' : {'Stern' : 'Navigation', 'Console' : 'Offline',},
     'Navigation' :  { 'Bow' : 'Bridge' , 'Stern' : 'Mid Deck', 'Console' : 'Offline' } ,
     'Mid Deck' : { 'Bow' : 'Navigation' , 'Stern' : 'Power Generator' , 'Port' : 'Life Support', 'Starboard' : 'Communications Array'} ,
     'Power Generator' : { 'Bow' : 'Mid Deck' , 'Stern' : 'Engine Room', 'Console' : 'Offline'},
@@ -22,35 +22,40 @@ def show_instructions():
     print('You are stuck in the gravity well of a star and if you try to pilot the ship before all systems are active')
     print('the ships systems will short out and you will be swallowed by the star.')
     print('Move commands are : Bow, Stern, Port, Starboard')
-    print('To power up systems : Activate')
+    print('To power up systems : Console')
     print('To quit game type Exit.')
+
 checklist = []
 win_condition = int(len(checklist))
 
 #Function to show current room,present possible directions to move, and get user input on where to go next or quit the game
 def main():
+
     current_room = 'Mid Deck'
     user_input = None
-    commands = ['Bow', 'Stern', 'Port', 'Starboard', 'Exit', 'Activate']
-    while user_input != 'Exit':                             #Check to see if user wants to exit game
-
-        print('You are in', current_room + '.' )            #Print list of possible user actions
+    current_room_keys = rooms.get(current_room)
+    while user_input != 'Exit':  # Check to see if user wants to exit game
+        print('You are in', current_room + '.')  # Print list of possible user actions
         options = rooms.get(current_room)
         for i in options:
             print(i, 'is', options[i])
 
-        user_input = input('What do you want to do?:').capitalize()         #Get user input
+        user_input = input('What do you want to do?:').capitalize()  # Get user input
+
+        if user_input in current_room_keys:
+            current_room = rooms[current_room][user_input]
+            current_room_keys = ['Port','Bow','Stern', 'Starboard']
 
 
-        if user_input == 'Exit':
-            print('Sorry you lost!')
 
-        elif user_input == 'Checklist':                     #Command to check which consoles have been activated
+
+        elif user_input == 'Checklist':  # Command to check which consoles have been activated
             print('\n'.join(checklist))
 
 
-        elif user_input == 'Activate':          #Command to activate consoles and update dictionary and list to reflect user input
+        elif user_input == 'Console':  # Command to activate consoles and update dictionary and list to reflect user input
             if current_room == 'Bridge':
+                win_condition = len(checklist)
                 if win_condition < 7:
                     print('If you activate the console now')
                     print('the ships systems will short circuit')
@@ -65,11 +70,19 @@ def main():
                 else:
                     print('Congratulations you have escaped the stars gravity well!')
                     print('Thanks for playing and safe journey home!')
+                    break
             else:
                 checklist.append(current_room + ' is online.')
                 rooms[current_room]['Console'] = 'Online'
+
+
+
+        elif user_input == 'Exit':
+            print('Sorry you lost!')
+
         else:
-            current_room = rooms[current_room][user_input]
+            print('Please input a valid key')
+            continue
 
 show_instructions()
 main()

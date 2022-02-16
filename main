@@ -1,0 +1,75 @@
+#Michael Antoniazzi IT - 140 Final Project
+
+#Make nested dictionary for game rooms and console actions
+
+rooms ={
+    'Bridge' : {'Stern' : 'Navigation', 'Console' : 'Offline'},
+    'Navigation' :  { 'Bow' : 'Bridge' , 'Stern' : 'Mid Deck', 'Console' : 'Offline' } ,
+    'Mid Deck' : { 'Bow' : 'Navigation' , 'Stern' : 'Power Generator' , 'Port' : 'Life Support', 'Starboard' : 'Communications Array'} ,
+    'Power Generator' : { 'Bow' : 'Mid Deck' , 'Stern' : 'Engine Room', 'Console' : 'Offline'},
+    'Life Support' : { 'Starboard' : 'Mid Deck' , 'Stern' : 'Medical Bay', 'Console' : 'Offline'},
+    'Medical Bay' : {'Bow' : 'Life Support', 'Console' : 'Offline'},
+    'Communications Array' : {'Port' : 'Mid Deck' , 'Stern' : 'Defense Systems', 'Console' : 'Offline'},
+    'Defense Systems' : { 'Bow': 'Communications Array', 'Console' : 'Offline'},
+    'Engine Room' : {'Bow' : 'Power Generator', 'Console' : 'Offline' }
+}
+#Function to explain to player how to win the game
+def show_instructions():
+    #print main menu and command
+    print('Gravity Well Adventure Game')
+    print('You wake up alone on your ship, all crew is missing and the ship is running on emergency power.')
+    print('You must reactivate all of the ships systems before you can use the bridge terminal.')
+    print('You are stuck in the gravity well of a star and if you try to pilot the ship before all systems are active')
+    print('the ships systems will short out and you will be swallowed by the star.')
+    print('Move commands are : Bow, Stern, Port, Starboard')
+    print('To power up systems : Activate')
+    print('To quit game type Exit.')
+checklist = []
+win_condition = int(len(checklist))
+
+#Function to show current room,present possible directions to move, and get user input on where to go next or quit the game
+def main():
+    current_room = 'Mid Deck'
+    user_input = None
+    commands = ['Bow', 'Stern', 'Port', 'Starboard', 'Exit', 'Activate']
+    while user_input != 'Exit':                             #Check to see if user wants to exit game
+
+        print('You are in', current_room + '.' )            #Print list of possible user actions
+        options = rooms.get(current_room)
+        for i in options:
+            print(i, 'is', options[i])
+
+        user_input = input('What do you want to do?:').capitalize()         #Get user input
+
+
+        if user_input == 'Exit':
+            print('Sorry you lost!')
+
+        elif user_input == 'Checklist':                     #Command to check which consoles have been activated
+            print('\n'.join(checklist))
+
+
+        elif user_input == 'Activate':          #Command to activate consoles and update dictionary and list to reflect user input
+            if current_room == 'Bridge':
+                if win_condition < 7:
+                    print('If you activate the console now')
+                    print('the ships systems will short circuit')
+                    print('and you will never escape the gravity well.')
+                    print('Do you still want to activate? Yes or No?')
+                    user_input = input().capitalize()
+                    if user_input == 'Yes':
+                        print('You have lost the game!')
+                    else:
+                        print('You have left the Bridge.')
+                        current_room = 'Navigation'
+                else:
+                    print('Congratulations you have escaped the stars gravity well!')
+                    print('Thanks for playing and safe journey home!')
+            else:
+                checklist.append(current_room + ' is online.')
+                rooms[current_room]['Console'] = 'Online'
+        else:
+            current_room = rooms[current_room][user_input]
+
+show_instructions()
+main()
